@@ -5,7 +5,6 @@ Render a gridworld environment using the pygame library
 import pygame
 import numpy as np
 from four_room import FourRoom
-# from pettingzoo.masf.gridworld import Shapes
 
 
 class Render:
@@ -32,6 +31,7 @@ class Render:
         grid_length = self.number_of_squares * (self.WIDTH + self.MARGIN) + self.MARGIN
         self.size = (grid_length, grid_length)
         self.screen = pygame.display.set_mode(self.size)
+        self.agent_state = None
         self.initialize()
         pygame.time.delay(200)
 
@@ -124,36 +124,36 @@ class Render:
         elif shape == 'circle':
             pygame.draw.circle(self.screen,
                                color,
-                               [(self.MARGIN + self.WIDTH) * c + self.MARGIN + self.WIDTH/2,
-                                (self.MARGIN + self.HEIGHT) * r + self.MARGIN + self.HEIGHT/2],
+                               [(self.MARGIN + self.WIDTH) * c + self.MARGIN + self.WIDTH / 2,
+                                (self.MARGIN + self.HEIGHT) * r + self.MARGIN + self.HEIGHT / 2],
                                10)
         elif shape == 'tri':
             pygame.draw.polygon(self.screen,
-                               color,
-                               [[(self.MARGIN + self.WIDTH) * c + self.MARGIN + self.WIDTH/2,
-                                (self.MARGIN + self.HEIGHT) * r + self.MARGIN],
-                               [(self.MARGIN + self.WIDTH) * c + self.MARGIN,
-                                (self.MARGIN + self.HEIGHT) * r + self.MARGIN + self.HEIGHT-0.1],
-                               [(self.MARGIN + self.WIDTH) * c + self.MARGIN + self.WIDTH,
-                                (self.MARGIN + self.HEIGHT) * r + self.MARGIN + self.HEIGHT-0.1]])
+                                color,
+                                [[(self.MARGIN + self.WIDTH) * c + self.MARGIN + self.WIDTH / 2,
+                                  (self.MARGIN + self.HEIGHT) * r + self.MARGIN],
+                                 [(self.MARGIN + self.WIDTH) * c + self.MARGIN,
+                                  (self.MARGIN + self.HEIGHT) * r + self.MARGIN + self.HEIGHT - 0.1],
+                                 [(self.MARGIN + self.WIDTH) * c + self.MARGIN + self.WIDTH,
+                                  (self.MARGIN + self.HEIGHT) * r + self.MARGIN + self.HEIGHT - 0.1]])
 
 
 if __name__ == "__main__":
 
-    maze=[
-    ['1', ' ', ' ', ' ', ' ', '2', 'X', ' ', ' ', ' ', ' ', ' ', 'G'],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', '1', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
-    ['2', ' ', ' ', ' ', ' ', '3', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
-    ['X', 'X', '3', ' ', 'X', 'X', 'X', 'X', 'X', ' ', '1', 'X', 'X'],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'X', '2', ' ', ' ', ' ', ' ', '3'],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', '2', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
-    ['_', ' ', ' ', ' ', ' ', ' ', 'X', '3', ' ', ' ', ' ', ' ', '1']]
+    maze = [
+        ['1', ' ', ' ', ' ', ' ', '2', 'X', ' ', ' ', ' ', ' ', ' ', 'G'],
+        [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', '1', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
+        ['2', ' ', ' ', ' ', ' ', '3', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
+        ['X', 'X', '3', ' ', 'X', 'X', 'X', 'X', 'X', ' ', '1', 'X', 'X'],
+        [' ', ' ', ' ', ' ', ' ', ' ', 'X', '2', ' ', ' ', ' ', ' ', '3'],
+        [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', '2', ' ', ' ', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
+        ['_', ' ', ' ', ' ', ' ', ' ', 'X', '3', ' ', ' ', ' ', ' ', '1']]
     maze = np.array(maze)
 
     rewards = dict(zip(['1', '2', '3'], list(np.random.uniform(low=-1.0, high=1.0, size=3))))
@@ -177,6 +177,3 @@ if __name__ == "__main__":
             gridworld = FourRoom(maze=maze, shape_rewards=rewards)
             s0 = gridworld.initialize()
             my_grid = Render(maze=gridworld.env_maze)
-
-
-    print("finish")
