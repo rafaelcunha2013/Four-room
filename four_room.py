@@ -29,6 +29,8 @@ class FourRoom:
 
     # Code adaptaed from: https://github.com/mike-gimelfarb/deep-successor-features-for-transfer/blob/main/source/tasks/gridworld.py
 
+    In this version, a render is implemented and the agent can start at random locations.
+
     References
     ----------
     [1] Barreto, Andr�, et al. "Successor Features for Transfer in Reinforcement Learning." NIPS. 2017.
