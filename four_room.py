@@ -6,11 +6,13 @@ import copy
 # from render import Render
 
 
-class Shapes:
+class FourRoom:
     """
     A discretized version of the gridworld environment introduced in [1]. Here, an agent learns to
     collect shapes with positive reward, while avoid those with negative reward, and then travel to a fixed goal.
     The gridworld is split into four rooms separated by walls with passage-ways.
+
+    # Code adaptaed from: https://github.com/mike-gimelfarb/deep-successor-features-for-transfer/blob/main/source/tasks/gridworld.py
 
     References
     ----------
@@ -19,7 +21,7 @@ class Shapes:
 
     LEFT, UP, RIGHT, DOWN = 0, 1, 2, 3
 
-    def __init__(self, maze, shape_rewards):
+    def __init__(self, maze, shape_rewards, random_initial_position=True):
         """
         Creates a new instance of the shapes environment.
 
@@ -39,6 +41,7 @@ class Shapes:
         """
         self.max_num_agents = 1
         self.my_render = None
+        self.random_initial_position = random_initial_position
 
         # self.action_spaces[agent].n
 
@@ -65,22 +68,26 @@ class Shapes:
                     self.shape_ids[(r, c)] = len(self.shape_ids)
 
         self.state = None
+        self.render_flag = None
 
     def clone(self):
-        return Shapes(self.maze, self.shape_rewards)
+        return FourRoom(self.maze, self.shape_rewards)
 
     def initialize(self, render_flag=False):
         self.render_flag = render_flag
         self.env_maze = copy.deepcopy(self.maze)
-        self.initial = []
-        n_r, n_c = np.shape(self.maze)
-        initial_position = False
-        while not initial_position:
-            r, c = (np.random.randint(0, n_r), np.random.randint(0, n_c))
-            if self.maze[r, c] == ' ':
-                self.initial.append((r, c))
-                self.env_maze[r, c] = '_'
-                initial_position = True
+        if self.random_initial_position:
+            for (r, c) in self.initial:
+                self.env_maze[r, c] = ' '
+            self.initial = []
+            n_r, n_c = np.shape(self.maze)
+            initial_position = False
+            while not initial_position:
+                r, c = (np.random.randint(0, n_r), np.random.randint(0, n_c))
+                if self.maze[r, c] == ' ':
+                    self.initial.append((r, c))
+                    self.env_maze[r, c] = '_'
+                    initial_position = True
         self.state = (random.choice(self.initial), tuple(0 for _ in range(len(self.shape_ids))))
         # self.state = ((r,c), tuple(0 for _ in range(len(self.shape_ids))))
         # if render_flag:
@@ -95,13 +102,13 @@ class Shapes:
         # print(self.state)
         # print(action)
         # perform the movement
-        if action == Shapes.LEFT:
+        if action == FourRoom.LEFT:
             col -= 1
-        elif action == Shapes.UP:
+        elif action == FourRoom.UP:
             row -= 1
-        elif action == Shapes.RIGHT:
+        elif action == FourRoom.RIGHT:
             col += 1
-        elif action == Shapes.DOWN:
+        elif action == FourRoom.DOWN:
             row += 1
         else:
             raise Exception('bad action {}'.format(action))

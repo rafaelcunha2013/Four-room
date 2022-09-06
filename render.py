@@ -4,7 +4,7 @@ Render a gridworld environment using the pygame library
 
 import pygame
 import numpy as np
-from four_room import Shapes
+from four_room import FourRoom
 # from pettingzoo.masf.gridworld import Shapes
 
 
@@ -29,8 +29,8 @@ class Render:
         self.number_of_squares = self.maze_height
 
         # Set the width and height of the screen [width, height]
-        grid_lenth = self.number_of_squares * (self.WIDTH + self.MARGIN) + self.MARGIN
-        self.size = (grid_lenth, grid_lenth)
+        grid_length = self.number_of_squares * (self.WIDTH + self.MARGIN) + self.MARGIN
+        self.size = (grid_length, grid_length)
         self.screen = pygame.display.set_mode(self.size)
         self.initialize()
         pygame.time.delay(200)
@@ -67,26 +67,9 @@ class Render:
         # self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption("GridWorld")
 
-        # Loop until the user clicks the close button.
-        #done = False
-
         # Used to manage how fast the screen updates
         clock = pygame.time.Clock()
-        # -------- Main Program Loop -----------
-        #while not done:
-        # --- Main event loop
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         done = True
 
-        # --- Game logic should go here
-
-        # --- Screen-clearing code goes here
-
-        # Here, we clear the screen to white. Don't put other drawing commands
-        # above this, or they will be erased with this command.
-
-        # If you want a background image, replace this clear with blit'ing the
         # background image.
         self.screen.fill(Render.BLACK)
 
@@ -121,14 +104,6 @@ class Render:
                 elif self.maze[r, c] in {'1'}:
                     color = Render.BLUE
                     self.draw_shape(r, c, color, 'tri')
-                # pygame.draw.rect(self.screen,
-                #                  color,
-                #                  [(self.MARGIN + self.WIDTH) * c + self.MARGIN,
-                #                   (self.MARGIN + self.HEIGHT) * r + self.MARGIN,
-                #                   self.WIDTH,
-                #                   self.HEIGHT])
-
-        # --- Go ahead and update the screen with what we've drawn.
 
         pygame.display.flip()
 
@@ -136,7 +111,7 @@ class Render:
         clock.tick(60)
 
         # Close the window and quit.
-        #pygame.quit()
+        # pygame.quit()
 
     def draw_shape(self, r, c, color, shape):
         if shape == 'rect':
@@ -164,8 +139,7 @@ class Render:
 
 
 if __name__ == "__main__":
-    # import os
-    # os.environ["SDL_VIDEODRIVER"] = "dummy"
+
     maze=[
     ['1', ' ', ' ', ' ', ' ', '2', 'X', ' ', ' ', ' ', ' ', ' ', 'G'],
     [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -181,17 +155,28 @@ if __name__ == "__main__":
     [' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', ' '],
     ['_', ' ', ' ', ' ', ' ', ' ', 'X', '3', ' ', ' ', ' ', ' ', '1']]
     maze = np.array(maze)
-    my_grid = Render(maze=maze)
 
     rewards = dict(zip(['1', '2', '3'], list(np.random.uniform(low=-1.0, high=1.0, size=3))))
-    gridworld = Shapes(maze=maze, shape_rewards=rewards)
+    gridworld = FourRoom(maze=maze, shape_rewards=rewards)
 
     s0 = gridworld.initialize()
+    my_grid = Render(maze=gridworld.env_maze)
 
-    for _ in range(500):
-        action = np.random.randint(0,4)
+    for _ in range(1000):
+
+        action = np.random.randint(0, 4)
+        if np.random.random() < 0.20:
+            if np.random.random() < 0.50:
+                action = 2
+            else:
+                action = 1
         next_state, reward, done = gridworld.transition(action)
 
         my_grid.update(next_state[0])
+        if done:
+            gridworld = FourRoom(maze=maze, shape_rewards=rewards)
+            s0 = gridworld.initialize()
+            my_grid = Render(maze=gridworld.env_maze)
+
 
     print("finish")
